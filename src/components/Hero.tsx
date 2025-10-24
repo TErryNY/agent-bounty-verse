@@ -63,7 +63,7 @@ const Hero = () => {
               <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               Launch Your Agent
             </Button>
-            <Button size="lg" variant="glass">
+            <Button size="lg" variant="outline">
               <Trophy className="w-5 h-5" />
               View Quests
             </Button>

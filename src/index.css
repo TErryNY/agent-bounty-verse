@@ -81,9 +81,9 @@ All colors MUST be HSL.
   }
 
   .glass {
-    background: hsl(var(--card) / 0.6);
+    background: hsl(var(--card) / 0.8);
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.5);
+    border: 1px solid hsl(var(--border) / 0.6);
   }
 
   .animate-float {
