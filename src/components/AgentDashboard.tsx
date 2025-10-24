@@ -3,8 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Bot, TrendingUp, Award, Zap } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const AgentDashboard = () => {
+  const { toast } = useToast();
   const agentStats = {
     level: 12,
     xp: 3450,
@@ -104,7 +106,16 @@ const AgentDashboard = () => {
           <Card className="glass p-6 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold">Recent Activity</h3>
-              <Button variant="ghost" size="sm">View All</Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => toast({
+                  title: "Activity History",
+                  description: "Loading full activity history...",
+                })}
+              >
+                View All
+              </Button>
             </div>
             <div className="space-y-4">
               {recentActivity.map((activity, index) => (

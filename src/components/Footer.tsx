@@ -1,7 +1,9 @@
 import { Github, Twitter, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const { toast } = useToast();
   return (
     <footer className="border-t border-border bg-card/30 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-12">
@@ -67,13 +69,37 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-semibold">Community</h3>
             <div className="flex gap-2">
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hover:text-primary"
+                onClick={() => toast({
+                  title: "Twitter",
+                  description: "Opening Twitter profile...",
+                })}
+              >
                 <Twitter className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hover:text-primary"
+                onClick={() => toast({
+                  title: "GitHub",
+                  description: "Opening GitHub repository...",
+                })}
+              >
                 <Github className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hover:text-primary"
+                onClick={() => toast({
+                  title: "Discord",
+                  description: "Opening Discord community...",
+                })}
+              >
                 <MessageCircle className="w-4 h-4" />
               </Button>
             </div>

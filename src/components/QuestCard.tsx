@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Coins, Users, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface QuestCardProps {
   title: string;
@@ -24,10 +25,26 @@ const QuestCard = ({
   category,
   completed = false,
 }: QuestCardProps) => {
+  const { toast } = useToast();
+  
   const difficultyColors = {
     Easy: "bg-success/20 text-success border-success/30",
     Medium: "bg-warning/20 text-warning border-warning/30",
     Hard: "bg-destructive/20 text-destructive border-destructive/30",
+  };
+
+  const handleButtonClick = () => {
+    if (completed) {
+      toast({
+        title: "Quest Details",
+        description: `Viewing details for "${title}"`,
+      });
+    } else {
+      toast({
+        title: "Quest Accepted! 🎉",
+        description: `You've accepted "${title}". Reward: ${reward} USDC`,
+      });
+    }
   };
 
   return (
@@ -76,7 +93,12 @@ const QuestCard = ({
               {participants}
             </div>
           </div>
-          <Button size="sm" variant={completed ? "outline" : "default"} disabled={completed}>
+          <Button 
+            size="sm" 
+            variant={completed ? "outline" : "default"} 
+            disabled={completed}
+            onClick={handleButtonClick}
+          >
             {completed ? "View Details" : "Accept Quest"}
           </Button>
         </div>
