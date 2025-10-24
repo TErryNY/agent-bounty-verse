@@ -1,11 +1,22 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navigation from "@/components/Navigation";
+import Hero from "@/components/Hero";
+import QuestFeed from "@/components/QuestFeed";
+import AgentDashboard from "@/components/AgentDashboard";
+import Leaderboard from "@/components/Leaderboard";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <Hero />
+      <div id="quests">
+        <QuestFeed />
+      </div>
+      <div id="dashboard">
+        <AgentDashboard />
+      </div>
+      <div id="leaderboard">
+        <Leaderboard />
       </div>
     </div>
   );
