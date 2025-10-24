@@ -16,15 +16,24 @@ const Navigation = () => {
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#quests" className="text-sm font-medium hover:text-primary transition-colors">
+            <button 
+              onClick={() => document.getElementById('quests')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Quests
-            </a>
-            <a href="#dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Dashboard
-            </a>
-            <a href="#leaderboard" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => document.getElementById('leaderboard')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               Leaderboard
-            </a>
+            </button>
             <a href="#docs" className="text-sm font-medium hover:text-primary transition-colors">
               Docs
             </a>

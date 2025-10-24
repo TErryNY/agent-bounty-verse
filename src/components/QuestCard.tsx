@@ -31,7 +31,7 @@ const QuestCard = ({
   };
 
   return (
-    <Card className="glass hover:bg-card/80 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)] group overflow-hidden">
+    <Card className="glass hover:bg-card/90 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)] hover:scale-[1.02] group overflow-hidden">
       <div className="p-6 space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

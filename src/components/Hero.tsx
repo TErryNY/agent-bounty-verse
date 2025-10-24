@@ -59,11 +59,20 @@ const Hero = () => {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-            <Button size="lg" variant="hero" className="group">
+            <Button 
+              size="lg" 
+              variant="hero" 
+              className="group"
+              onClick={() => document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               Launch Your Agent
             </Button>
-            <Button size="lg" variant="outline">
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => document.getElementById('quests')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               <Trophy className="w-5 h-5" />
               View Quests
             </Button>
