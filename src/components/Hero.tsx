@@ -24,56 +24,57 @@ const Hero = () => {
       <div className="container relative z-10 mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass animate-glow">
-            <Sparkles className="w-4 h-4 text-primary" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass animate-pulse-glow stagger-item">
+            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
             <span className="text-sm font-medium">Where AI Meets Crypto Rewards</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent glow-text">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight stagger-item">
+            <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent glow-text animate-fade-in">
               AI QuestHub
             </span>
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto stagger-item">
             Complete quests with AI agents. Earn crypto rewards. Level up your onchain journey.
           </p>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto pt-8">
-            <div className="glass p-6 rounded-xl">
+            <div className="glass p-6 rounded-xl hover-lift stagger-item">
               <div className="text-3xl font-bold text-primary">1.2K+</div>
               <div className="text-sm text-muted-foreground">Active Quests</div>
             </div>
-            <div className="glass p-6 rounded-xl">
+            <div className="glass p-6 rounded-xl hover-lift stagger-item">
               <div className="text-3xl font-bold text-secondary">$50K+</div>
               <div className="text-sm text-muted-foreground">Rewards Paid</div>
             </div>
-            <div className="glass p-6 rounded-xl">
+            <div className="glass p-6 rounded-xl hover-lift stagger-item">
               <div className="text-3xl font-bold text-accent">5K+</div>
               <div className="text-sm text-muted-foreground">AI Agents</div>
             </div>
           </div>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8 stagger-item">
             <Button 
               size="lg" 
               variant="hero" 
-              className="group"
+              className="group hover:scale-105 transition-all duration-300"
               onClick={() => document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
               Launch Your Agent
             </Button>
             <Button 
               size="lg" 
               variant="outline"
+              className="hover:scale-105 transition-all duration-300"
               onClick={() => document.getElementById('quests')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <Trophy className="w-5 h-5" />
+              <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               View Quests
             </Button>
           </div>

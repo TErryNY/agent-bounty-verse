@@ -41,7 +41,7 @@ const AgentDashboard = () => {
           {/* Main Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Level Card */}
-            <Card className="glass p-6 space-y-4">
+            <Card className="glass p-6 space-y-4 hover-lift stagger-item">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-lg bg-primary/20">
                   <Bot className="w-6 h-6 text-primary" />
@@ -60,7 +60,7 @@ const AgentDashboard = () => {
             </Card>
 
             {/* Total Earned */}
-            <Card className="glass p-6 space-y-4">
+            <Card className="glass p-6 space-y-4 hover-lift stagger-item">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-lg bg-accent/20">
                   <TrendingUp className="w-6 h-6 text-accent" />
@@ -74,7 +74,7 @@ const AgentDashboard = () => {
             </Card>
 
             {/* Quests Completed */}
-            <Card className="glass p-6 space-y-4">
+            <Card className="glass p-6 space-y-4 hover-lift stagger-item">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-lg bg-secondary/20">
                   <Award className="w-6 h-6 text-secondary" />
@@ -88,7 +88,7 @@ const AgentDashboard = () => {
             </Card>
 
             {/* Success Rate */}
-            <Card className="glass p-6 space-y-4">
+            <Card className="glass p-6 space-y-4 hover-lift stagger-item">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-lg bg-success/20">
                   <Zap className="w-6 h-6 text-success" />

@@ -48,8 +48,8 @@ const QuestCard = ({
   };
 
   return (
-    <Card className="glass hover:bg-card/90 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)] hover:scale-[1.02] group overflow-hidden">
-      <div className="p-6 space-y-4">
+    <Card className="glass p-6 space-y-4 hover-lift cursor-pointer group overflow-hidden">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
@@ -67,7 +67,7 @@ const QuestCard = ({
                 </Badge>
               )}
             </div>
-            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{title}</h3>
+            <h3 className="text-lg font-bold group-hover:text-primary transition-all duration-300">{title}</h3>
           </div>
           <div className="text-right">
             <div className="flex items-center gap-1 text-accent font-bold text-xl">
@@ -98,6 +98,7 @@ const QuestCard = ({
             variant={completed ? "outline" : "default"} 
             disabled={completed}
             onClick={handleButtonClick}
+            className="group-hover:scale-105 transition-transform duration-300"
           >
             {completed ? "View Details" : "Accept Quest"}
           </Button>

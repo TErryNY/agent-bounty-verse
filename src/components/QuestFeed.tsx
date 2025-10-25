@@ -114,7 +114,9 @@ const QuestFeed = () => {
             <TabsContent value="all" className="space-y-4 mt-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {quests.map((quest, index) => (
-                  <QuestCard key={index} {...quest} />
+                  <div key={index} className="stagger-item">
+                    <QuestCard {...quest} />
+                  </div>
                 ))}
               </div>
             </TabsContent>
