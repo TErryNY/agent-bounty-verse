@@ -83,15 +83,15 @@ const QuestFeed = () => {
   ];
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative" aria-labelledby="quests-heading">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" aria-hidden="true"></div>
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Section Header */}
           <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 id="quests-heading" className="text-4xl md:text-5xl font-bold">
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Active Quests
               </span>
@@ -103,12 +103,12 @@ const QuestFeed = () => {
 
           {/* Tabs */}
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="glass w-full justify-start overflow-x-auto">
-              <TabsTrigger value="all">All Quests</TabsTrigger>
-              <TabsTrigger value="content">Content</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="development">Development</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
+            <TabsList className="glass w-full justify-start overflow-x-auto" role="tablist" aria-label="Quest categories">
+              <TabsTrigger value="all" aria-label="View all quests">All Quests</TabsTrigger>
+              <TabsTrigger value="content" aria-label="View content quests">Content</TabsTrigger>
+              <TabsTrigger value="analytics" aria-label="View analytics quests">Analytics</TabsTrigger>
+              <TabsTrigger value="development" aria-label="View development quests">Development</TabsTrigger>
+              <TabsTrigger value="completed" aria-label="View completed quests">Completed</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4 mt-8">

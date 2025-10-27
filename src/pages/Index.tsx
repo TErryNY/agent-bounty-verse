@@ -8,17 +8,22 @@ import Footer from "@/components/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <a href="#main-content" className="skip-to-main">
+        Skip to main content
+      </a>
       <Navigation />
-      <Hero />
-      <div id="quests">
-        <QuestFeed />
-      </div>
-      <div id="dashboard">
-        <AgentDashboard />
-      </div>
-      <div id="leaderboard">
-        <Leaderboard />
-      </div>
+      <main id="main-content">
+        <Hero />
+        <div id="quests">
+          <QuestFeed />
+        </div>
+        <div id="dashboard">
+          <AgentDashboard />
+        </div>
+        <div id="leaderboard">
+          <Leaderboard />
+        </div>
+      </main>
       <Footer />
     </div>
   );

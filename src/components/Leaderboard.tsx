@@ -16,19 +16,19 @@ const Leaderboard = () => {
   ];
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative" aria-labelledby="leaderboard-heading">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" aria-hidden="true"></div>
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Section Header */}
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass">
-              <Trophy className="w-4 h-4 text-accent" />
+              <Trophy className="w-4 h-4 text-accent" aria-hidden="true" />
               <span className="text-sm font-medium">Top Performers</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 id="leaderboard-heading" className="text-4xl md:text-5xl font-bold">
               <span className="bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent">
                 Leaderboard
               </span>
@@ -39,7 +39,7 @@ const Leaderboard = () => {
           </div>
 
           {/* Top 3 Podium */}
-          <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
+          <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto mb-8" role="region" aria-label="Top three agents">
             {/* 2nd Place */}
             <div className="mt-12">
               <Card className="glass p-4 text-center space-y-3 hover:shadow-[0_0_30px_rgba(195,195,195,0.2)] transition-all">
@@ -94,12 +94,14 @@ const Leaderboard = () => {
           </div>
 
           {/* Rest of Rankings */}
-          <Card className="glass overflow-hidden">
-            <div className="divide-y divide-border">
+          <Card className="glass overflow-hidden" role="region" aria-label="Agent rankings">
+            <div className="divide-y divide-border" role="list">
               {topAgents.slice(3).map((agent) => (
                 <div
                   key={agent.rank}
                   className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
+                  role="listitem"
+                  aria-label={`Rank ${agent.rank}: ${agent.name} with ${agent.earnings} earned`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-8 text-center font-bold text-muted-foreground">

@@ -48,30 +48,39 @@ const QuestCard = ({
   };
 
   return (
-    <Card className="glass p-6 space-y-4 hover-lift cursor-pointer group overflow-hidden">
+    <Card 
+      className="glass p-6 space-y-4 hover-lift cursor-pointer group overflow-hidden"
+      role="article"
+      aria-labelledby={`quest-${title.replace(/\s+/g, '-').toLowerCase()}`}
+    >
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs" aria-label={`Category: ${category}`}>
                 {category}
               </Badge>
-              <Badge variant="outline" className={`text-xs border ${difficultyColors[difficulty]}`}>
+              <Badge variant="outline" className={`text-xs border ${difficultyColors[difficulty]}`} aria-label={`Difficulty: ${difficulty}`}>
                 {difficulty}
               </Badge>
               {completed && (
                 <Badge variant="outline" className="text-xs border bg-success/20 text-success border-success/30">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  <CheckCircle2 className="w-3 h-3 mr-1" aria-hidden="true" />
                   Completed
                 </Badge>
               )}
             </div>
-            <h3 className="text-lg font-bold group-hover:text-primary transition-all duration-300">{title}</h3>
+            <h3 
+              id={`quest-${title.replace(/\s+/g, '-').toLowerCase()}`} 
+              className="text-lg font-bold group-hover:text-primary transition-all duration-300"
+            >
+              {title}
+            </h3>
           </div>
-          <div className="text-right">
+          <div className="text-right" aria-label={`Reward: ${reward} USDC`}>
             <div className="flex items-center gap-1 text-accent font-bold text-xl">
-              <Coins className="w-5 h-5" />
+              <Coins className="w-5 h-5" aria-hidden="true" />
               {reward}
             </div>
             <p className="text-xs text-muted-foreground">USDC</p>
@@ -84,12 +93,12 @@ const QuestCard = ({
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-border">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
+            <div className="flex items-center gap-1" aria-label={`Time remaining: ${timeLeft}`}>
+              <Clock className="w-4 h-4" aria-hidden="true" />
               {timeLeft}
             </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
+            <div className="flex items-center gap-1" aria-label={`${participants} participants`}>
+              <Users className="w-4 h-4" aria-hidden="true" />
               {participants}
             </div>
           </div>
@@ -99,6 +108,7 @@ const QuestCard = ({
             disabled={completed}
             onClick={handleButtonClick}
             className="group-hover:scale-105 transition-transform duration-300"
+            aria-label={completed ? `View details for ${title}` : `Accept quest: ${title}`}
           >
             {completed ? "View Details" : "Accept Quest"}
           </Button>

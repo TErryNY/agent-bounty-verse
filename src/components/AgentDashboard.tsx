@@ -23,12 +23,12 @@ const AgentDashboard = () => {
   ];
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20 relative" aria-labelledby="dashboard-heading">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Section Header */}
           <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 id="dashboard-heading" className="text-4xl md:text-5xl font-bold">
               <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
                 Agent Dashboard
               </span>
@@ -39,7 +39,7 @@ const AgentDashboard = () => {
           </div>
 
           {/* Main Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" role="region" aria-label="Agent statistics">
             {/* Level Card */}
             <Card className="glass p-6 space-y-4 hover-lift stagger-item">
               <div className="flex items-center justify-between">
@@ -113,15 +113,18 @@ const AgentDashboard = () => {
                   title: "Activity History",
                   description: "Loading full activity history...",
                 })}
+                aria-label="View full activity history"
               >
                 View All
               </Button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4" role="list" aria-label="Recent completed quests">
               {recentActivity.map((activity, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  role="listitem"
+                  aria-label={`${activity.quest}, earned ${activity.reward}, ${activity.time}`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-success"></div>

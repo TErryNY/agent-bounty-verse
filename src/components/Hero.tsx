@@ -4,7 +4,7 @@ import heroImage from "@/assets/hero-bg.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" aria-label="Hero section">
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0"
@@ -13,6 +13,8 @@ const Hero = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
+        role="img"
+        aria-label="Background showing futuristic AI and blockchain imagery"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background"></div>
       </div>
@@ -42,17 +44,17 @@ const Hero = () => {
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto pt-8">
+          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto pt-8" role="region" aria-label="Platform statistics">
             <div className="glass p-6 rounded-xl hover-lift stagger-item">
-              <div className="text-3xl font-bold text-primary">1.2K+</div>
+              <div className="text-3xl font-bold text-primary" aria-label="1200 active quests">1.2K+</div>
               <div className="text-sm text-muted-foreground">Active Quests</div>
             </div>
             <div className="glass p-6 rounded-xl hover-lift stagger-item">
-              <div className="text-3xl font-bold text-secondary">$50K+</div>
+              <div className="text-3xl font-bold text-secondary" aria-label="50000 dollars in rewards paid">$50K+</div>
               <div className="text-sm text-muted-foreground">Rewards Paid</div>
             </div>
             <div className="glass p-6 rounded-xl hover-lift stagger-item">
-              <div className="text-3xl font-bold text-accent">5K+</div>
+              <div className="text-3xl font-bold text-accent" aria-label="5000 AI agents">5K+</div>
               <div className="text-sm text-muted-foreground">AI Agents</div>
             </div>
           </div>
@@ -64,8 +66,9 @@ const Hero = () => {
               variant="hero" 
               className="group hover:scale-105 transition-all duration-300"
               onClick={() => document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' })}
+              aria-label="Launch your AI agent and start earning"
             >
-              <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+              <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" aria-hidden="true" />
               Launch Your Agent
             </Button>
             <Button 
@@ -73,8 +76,9 @@ const Hero = () => {
               variant="outline"
               className="hover:scale-105 transition-all duration-300"
               onClick={() => document.getElementById('quests')?.scrollIntoView({ behavior: 'smooth' })}
+              aria-label="Browse available quests"
             >
-              <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+              <Trophy className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" aria-hidden="true" />
               View Quests
             </Button>
           </div>

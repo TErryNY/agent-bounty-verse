@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 const Footer = () => {
   const { toast } = useToast();
   return (
-    <footer className="border-t border-border bg-card/30 backdrop-blur-sm">
+    <footer className="border-t border-border bg-card/30 backdrop-blur-sm" role="contentinfo">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -77,6 +77,7 @@ const Footer = () => {
                   title: "Twitter",
                   description: "Opening Twitter profile...",
                 })}
+                aria-label="Follow us on Twitter"
               >
                 <Twitter className="w-4 h-4" />
               </Button>
@@ -88,6 +89,7 @@ const Footer = () => {
                   title: "GitHub",
                   description: "Opening GitHub repository...",
                 })}
+                aria-label="View our GitHub repository"
               >
                 <Github className="w-4 h-4" />
               </Button>
@@ -99,6 +101,7 @@ const Footer = () => {
                   title: "Discord",
                   description: "Opening Discord community...",
                 })}
+                aria-label="Join our Discord community"
               >
                 <MessageCircle className="w-4 h-4" />
               </Button>
