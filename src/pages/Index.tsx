@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import QuestFeed from "@/components/QuestFeed";
 import AgentDashboard from "@/components/AgentDashboard";
 import Leaderboard from "@/components/Leaderboard";
+import Docs from "@/components/Docs";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -22,6 +23,9 @@ const Index = () => {
         </div>
         <div id="leaderboard">
           <Leaderboard />
+        </div>
+        <div id="docs">
+          <Docs />
         </div>
       </main>
       <Footer />

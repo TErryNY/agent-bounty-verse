@@ -1,9 +1,58 @@
 import { Button } from "@/components/ui/button";
 import { Wallet, Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@/hooks/use-wallet";
+import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
+import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
 
 const Navigation = () => {
   const { toast } = useToast();
+  const { address, isConnected, isConnecting, connect, disconnect } = useWallet();
+
+  const handleWalletClick = async () => {
+    if (isConnected) {
+      disconnect();
+      analytics.track({
+        name: ANALYTICS_EVENTS.WALLET_DISCONNECTED,
+      });
+      toast({
+        title: "Wallet Disconnected",
+        description: "Your wallet has been disconnected successfully.",
+      });
+    } else {
+      // Rate limiting
+      if (!rateLimiter.check("wallet_connect", RATE_LIMITS.WALLET_CONNECT)) {
+        toast({
+          title: "Too Many Attempts",
+          description: "Please wait a moment before trying to connect again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        await connect();
+        analytics.track({
+          name: ANALYTICS_EVENTS.WALLET_CONNECTED,
+          properties: { address },
+        });
+        toast({
+          title: "Wallet Connected",
+          description: "Your wallet has been connected successfully!",
+        });
+      } catch (error) {
+        analytics.track({
+          name: ANALYTICS_EVENTS.ERROR_OCCURRED,
+          properties: { context: "wallet_connection", error: String(error) },
+        });
+        toast({
+          title: "Connection Failed",
+          description: "Failed to connect to your wallet. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
   return (
     <header>
       <nav className="fixed top-0 left-0 right-0 z-50 glass" aria-label="Main navigation">
@@ -40,13 +89,13 @@ const Navigation = () => {
               >
                 Leaderboard
               </button>
-              <a 
-                href="#docs" 
+              <button 
+                onClick={() => document.getElementById('docs')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm font-medium hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1"
                 aria-label="Read documentation"
               >
                 Docs
-              </a>
+              </button>
             </nav>
 
             {/* Actions */}
@@ -66,14 +115,14 @@ const Navigation = () => {
               <Button 
                 variant="hero" 
                 size="sm"
-                onClick={() => toast({
-                  title: "Wallet Connection",
-                  description: "Connecting to your Web3 wallet...",
-                })}
-                aria-label="Connect your Web3 wallet"
+                onClick={handleWalletClick}
+                disabled={isConnecting}
+                aria-label={isConnected ? "Disconnect your Web3 wallet" : "Connect your Web3 wallet"}
               >
                 <Wallet className="w-4 h-4" aria-hidden="true" />
-                <span className="hidden sm:inline">Connect Wallet</span>
+                <span className="hidden sm:inline">
+                  {isConnecting ? "Connecting..." : isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : "Connect Wallet"}
+                </span>
               </Button>
             </div>
           </div>
