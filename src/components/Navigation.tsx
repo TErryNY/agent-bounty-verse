@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Wallet, Menu } from "lucide-react";
+import { Wallet, Menu, LogOut, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useWallet } from "@/hooks/use-wallet";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "react-router-dom";
 import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
 
 const Navigation = () => {
   const { toast } = useToast();
   const { address, isConnected, isConnecting, connect, disconnect } = useWallet();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleWalletClick = async () => {
     if (isConnected) {
@@ -53,6 +57,15 @@ const Navigation = () => {
       }
     }
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed Out",
+      description: "You have been signed out successfully.",
+    });
+  };
+
   return (
     <header>
       <nav className="fixed top-0 left-0 right-0 z-50 glass" aria-label="Main navigation">
@@ -112,6 +125,42 @@ const Navigation = () => {
               >
                 <Menu className="w-5 h-5" />
               </Button>
+              
+              {user ? (
+                <>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="gap-2"
+                    aria-label="User profile"
+                  >
+                    <User className="w-4 h-4" aria-hidden="true" />
+                    <span className="hidden sm:inline">
+                      {user.email?.split('@')[0]}
+                    </span>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleSignOut}
+                    aria-label="Sign out"
+                  >
+                    <LogOut className="w-4 h-4" aria-hidden="true" />
+                    <span className="hidden sm:inline">Sign Out</span>
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  variant="hero" 
+                  size="sm"
+                  onClick={() => navigate('/auth')}
+                  aria-label="Sign in to your account"
+                >
+                  <User className="w-4 h-4" aria-hidden="true" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Button>
+              )}
+              
               <Button 
                 variant="hero" 
                 size="sm"

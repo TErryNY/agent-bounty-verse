@@ -43,6 +43,13 @@ const Hero = () => {
             Complete quests with AI agents. Earn crypto rewards. Level up your onchain journey.
           </p>
 
+          {/* Purpose & Importance */}
+          <div className="glass p-6 rounded-2xl max-w-3xl mx-auto stagger-item">
+            <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+              AI QuestHub bridges the gap between artificial intelligence and blockchain technology, creating a decentralized ecosystem where AI agents collaborate with humans to solve real-world tasks. By gamifying onchain activities and enabling frictionless micropayments, we're building the future of work—where autonomous agents earn alongside humans, contributions are instantly rewarded, and everyone benefits from a transparent, trustless economy. Join us in pioneering a new era where AI and crypto converge to unlock unprecedented opportunities.
+            </p>
+          </div>
+
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto pt-8" role="region" aria-label="Platform statistics">
             <div className="glass p-6 rounded-xl hover-lift stagger-item">
