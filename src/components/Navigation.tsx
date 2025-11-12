@@ -1,17 +1,34 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Wallet, Menu, LogOut, User } from "lucide-react";
+import { Wallet, Menu, LogOut, User, Settings, Home, Target, Trophy, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useWallet } from "@/hooks/use-wallet";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Navigation = () => {
   const { toast } = useToast();
   const { address, isConnected, isConnecting, connect, disconnect } = useWallet();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleWalletClick = async () => {
     if (isConnected) {
@@ -60,10 +77,18 @@ const Navigation = () => {
 
   const handleSignOut = async () => {
     await signOut();
+    navigate('/');
     toast({
       title: "Signed Out",
       description: "You have been signed out successfully.",
     });
+  };
+
+  const scrollToSection = (id: string) => {
+    setMobileMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -113,50 +138,135 @@ const Navigation = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="md:hidden"
-                onClick={() => toast({
-                  title: "Menu",
-                  description: "Mobile menu coming soon!",
-                })}
-                aria-label="Open mobile menu"
-              >
-                <Menu className="w-5 h-5" />
-              </Button>
+              {/* Mobile Menu */}
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="md:hidden"
+                    aria-label="Open mobile menu"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[280px] glass-strong">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">AQ</span>
+                      </div>
+                      AI QuestHub
+                    </SheetTitle>
+                  </SheetHeader>
+                  <nav className="flex flex-col gap-4 mt-8">
+                    <Button
+                      variant="ghost"
+                      className="justify-start gap-3"
+                      onClick={() => {
+                        navigate('/');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <Home className="w-5 h-5" />
+                      Home
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start gap-3"
+                      onClick={() => scrollToSection('quests')}
+                    >
+                      <Target className="w-5 h-5" />
+                      Quests
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start gap-3"
+                      onClick={() => scrollToSection('dashboard')}
+                    >
+                      <Settings className="w-5 h-5" />
+                      Dashboard
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start gap-3"
+                      onClick={() => scrollToSection('leaderboard')}
+                    >
+                      <Trophy className="w-5 h-5" />
+                      Leaderboard
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start gap-3"
+                      onClick={() => scrollToSection('docs')}
+                    >
+                      <BookOpen className="w-5 h-5" />
+                      Docs
+                    </Button>
+                    
+                    {user && (
+                      <>
+                        <div className="border-t border-border my-2" />
+                        <Button
+                          variant="ghost"
+                          className="justify-start gap-3 text-destructive hover:text-destructive"
+                          onClick={handleSignOut}
+                        >
+                          <LogOut className="w-5 h-5" />
+                          Sign Out
+                        </Button>
+                      </>
+                    )}
+                  </nav>
+                </SheetContent>
+              </Sheet>
               
+              {/* User Menu - Desktop */}
               {user ? (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="gap-2"
-                    aria-label="User profile"
-                  >
-                    <User className="w-4 h-4" aria-hidden="true" />
-                    <span className="hidden sm:inline">
-                      {user.email?.split('@')[0]}
-                    </span>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={handleSignOut}
-                    aria-label="Sign out"
-                  >
-                    <LogOut className="w-4 h-4" aria-hidden="true" />
-                    <span className="hidden sm:inline">Sign Out</span>
-                  </Button>
-                </>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="gap-2 hidden md:flex"
+                      aria-label="User profile menu"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="hidden sm:inline">
+                        {user.email?.split('@')[0]}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 glass-strong">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/')}>
+                      <Home className="mr-2 h-4 w-4" />
+                      Home
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => toast({
+                      title: "Coming Soon",
+                      description: "Profile settings will be available soon!",
+                    })}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <Button 
                   variant="hero" 
                   size="sm"
                   onClick={() => navigate('/auth')}
+                  className="hidden md:flex"
                   aria-label="Sign in to your account"
                 >
-                  <User className="w-4 h-4" aria-hidden="true" />
+                  <User className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign In</span>
                 </Button>
               )}
