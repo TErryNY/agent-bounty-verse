@@ -14,12 +14,103 @@ export type Database = {
   }
   public: {
     Tables: {
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_notifications: boolean | null
+          id: string
+          leaderboard_changes: boolean | null
+          quest_completed: boolean | null
+          quest_updates: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          leaderboard_changes?: boolean | null
+          quest_completed?: boolean | null
+          quest_updates?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          leaderboard_changes?: boolean | null
+          quest_completed?: boolean | null
+          quest_updates?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          quest_id: string | null
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          quest_id?: string | null
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          quest_id?: string | null
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string | null
           id: string
           quests_completed: number | null
+          theme: string | null
           total_points: number | null
           updated_at: string | null
           username: string
@@ -27,9 +118,11 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           id: string
           quests_completed?: number | null
+          theme?: string | null
           total_points?: number | null
           updated_at?: string | null
           username: string
@@ -37,9 +130,11 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           id?: string
           quests_completed?: number | null
+          theme?: string | null
           total_points?: number | null
           updated_at?: string | null
           username?: string

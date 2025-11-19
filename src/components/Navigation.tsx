@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Wallet, Menu, LogOut, User, Settings, Home, Target, Trophy, BookOpen } from "lucide-react";
+import { Wallet, Menu, LogOut, User, Settings, Home, Target, Trophy, BookOpen, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useWallet } from "@/hooks/use-wallet";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
 import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
+import NotificationsDropdown from "@/components/NotificationsDropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
