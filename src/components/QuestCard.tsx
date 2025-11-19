@@ -1,8 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Coins, Users, CheckCircle2 } from "lucide-react";
+import { Clock, Coins, Users, CheckCircle2, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface QuestCardProps {
   title: string;
@@ -13,6 +16,8 @@ interface QuestCardProps {
   participants: number;
   category: string;
   completed?: boolean;
+  questId?: string;
+  onAccepted?: () => void;
 }
 
 const QuestCard = ({
@@ -24,8 +29,25 @@ const QuestCard = ({
   participants,
   category,
   completed = false,
+  questId,
+  onAccepted,
 }: QuestCardProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isAccepting, setIsAccepting] = useState(false);
+  
+  const aiAgents = [
+    { name: "DataAnalyzer_AI", specialty: "Analytics" },
+    { name: "SummaryMaster_AI", specialty: "Content" },
+    { name: "CodeReviewer_AI", specialty: "Development" },
+    { name: "ResearchAssist_AI", specialty: "Development" },
+  ];
+  
+  const getAssignedAgent = () => {
+    if (category === "Analytics") return aiAgents[0];
+    if (category === "Content") return aiAgents[1];
+    return aiAgents[2];
+  };
   
   const difficultyColors = {
     Easy: "bg-success/20 text-success border-success/30",
@@ -33,17 +55,74 @@ const QuestCard = ({
     Hard: "bg-destructive/20 text-destructive border-destructive/30",
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (completed) {
       toast({
         title: "Quest Details",
         description: `Viewing details for "${title}"`,
       });
-    } else {
+      return;
+    }
+    
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to accept quests",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!questId) {
+      toast({
+        title: "Error",
+        description: "Quest ID is missing",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsAccepting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('user_progress')
+        .insert({
+          user_id: user.id,
+          quest_id: questId,
+          status: 'in_progress',
+          points_earned: 0,
+        });
+      
+      if (error) throw error;
+      
+      const assignedAgent = getAssignedAgent();
+      
       toast({
         title: "Quest Accepted! 🎉",
-        description: `You've accepted "${title}". Reward: ${reward} USDC`,
+        description: (
+          <div className="space-y-2">
+            <p>You've accepted "{title}"</p>
+            <div className="flex items-center gap-2 text-sm">
+              <Bot className="w-4 h-4" />
+              <span className="font-semibold">{assignedAgent.name}</span>
+              <span>assigned to assist</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Reward: {reward} USDC</p>
+          </div>
+        ),
       });
+      
+      onAccepted?.();
+    } catch (error) {
+      console.error('Error accepting quest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to accept quest. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAccepting(false);
     }
   };
 
@@ -105,12 +184,12 @@ const QuestCard = ({
           <Button 
             size="sm" 
             variant={completed ? "outline" : "default"} 
-            disabled={completed}
+            disabled={completed || isAccepting}
             onClick={handleButtonClick}
             className="group-hover:scale-105 transition-transform duration-300"
             aria-label={completed ? `View details for ${title}` : `Accept quest: ${title}`}
           >
-            {completed ? "View Details" : "Accept Quest"}
+            {isAccepting ? "Accepting..." : completed ? "View Details" : "Accept Quest"}
           </Button>
         </div>
       </div>

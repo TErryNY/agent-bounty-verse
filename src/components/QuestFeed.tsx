@@ -1,7 +1,35 @@
 import QuestCard from "./QuestCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import type { Database } from "@/integrations/supabase/types";
+
+type Quest = Database['public']['Tables']['quests']['Row'];
 
 const QuestFeed = () => {
+  const [dbQuests, setDbQuests] = useState<Quest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchQuests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('quests')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setDbQuests(data || []);
+    } catch (error) {
+      console.error('Error fetching quests:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuests();
+  }, []);
   const quests = [
     {
       title: "Summarize DeFi Governance Proposal",
