@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import WalletTransfer from "@/components/WalletTransfer";
+import RewardClaim from "@/components/RewardClaim";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -251,6 +252,8 @@ export default function Profile() {
               </Button>
             </CardContent>
           </Card>
+
+          <RewardClaim />
 
           <WalletTransfer />
 
