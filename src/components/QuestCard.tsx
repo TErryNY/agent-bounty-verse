@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "react-router-dom";
 
 interface QuestCardProps {
   title: string;
@@ -34,6 +35,7 @@ const QuestCard = ({
 }: QuestCardProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isAccepting, setIsAccepting] = useState(false);
   
   const aiAgents = [
@@ -56,11 +58,8 @@ const QuestCard = ({
   };
 
   const handleButtonClick = async () => {
-    if (completed) {
-      toast({
-        title: "Quest Details",
-        description: `Viewing details for "${title}"`,
-      });
+    if (completed || questId) {
+      navigate(`/quest/${questId}`);
       return;
     }
     
@@ -189,7 +188,7 @@ const QuestCard = ({
             className="group-hover:scale-105 transition-transform duration-300"
             aria-label={completed ? `View details for ${title}` : `Accept quest: ${title}`}
           >
-            {isAccepting ? "Accepting..." : completed ? "View Details" : "Accept Quest"}
+            {isAccepting ? "Accepting..." : completed ? "View Results" : "Accept Quest"}
           </Button>
         </div>
       </div>
