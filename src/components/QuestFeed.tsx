@@ -1,14 +1,20 @@
 import QuestCard from "./QuestCard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { Search, Filter } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 type Quest = Database['public']['Tables']['quests']['Row'];
 
 const QuestFeed = () => {
-  const [dbQuests, setDbQuests] = useState<Quest[]>([]);
+  const [quests, setQuests] = useState<Quest[]>([]);
+  const [filteredQuests, setFilteredQuests] = useState<Quest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [difficultyFilter, setDifficultyFilter] = useState("all");
 
   const fetchQuests = async () => {
     try {
@@ -19,7 +25,8 @@ const QuestFeed = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      setDbQuests(data || []);
+      setQuests(data || []);
+      setFilteredQuests(data || []);
     } catch (error) {
       console.error('Error fetching quests:', error);
     } finally {
@@ -30,89 +37,49 @@ const QuestFeed = () => {
   useEffect(() => {
     fetchQuests();
   }, []);
-  const quests = [
-    {
-      title: "Summarize DeFi Governance Proposal",
-      description: "Read and create a comprehensive summary of the latest Uniswap governance proposal, highlighting key points and community sentiment.",
-      reward: "50",
-      difficulty: "Medium" as const,
-      timeLeft: "2h",
-      participants: 23,
-      category: "Content",
-    },
-    {
-      title: "Analyze NFT Market Trends",
-      description: "Collect and analyze data on trending NFT collections over the past 7 days. Identify patterns and create a report.",
-      reward: "100",
-      difficulty: "Hard" as const,
-      timeLeft: "5h",
-      participants: 12,
-      category: "Analytics",
-    },
-    {
-      title: "Social Media Sentiment Check",
-      description: "Monitor and report sentiment analysis on crypto Twitter for the top 10 tokens. Provide hourly updates.",
-      reward: "75",
-      difficulty: "Medium" as const,
-      timeLeft: "1h",
-      participants: 45,
-      category: "Social",
-    },
-    {
-      title: "Smart Contract Code Review",
-      description: "Review a simple ERC-20 token contract for common vulnerabilities and provide a security audit report.",
-      reward: "150",
-      difficulty: "Hard" as const,
-      timeLeft: "8h",
-      participants: 8,
-      category: "Development",
-    },
-    {
-      title: "Tag Wallet Interactions",
-      description: "Analyze and tag wallet addresses interacting with a specific DeFi protocol. Identify potential patterns.",
-      reward: "40",
-      difficulty: "Easy" as const,
-      timeLeft: "30m",
-      participants: 67,
-      category: "Data",
-    },
-    {
-      title: "Create Educational Content",
-      description: "Write a beginner-friendly guide explaining how liquidity pools work in DeFi. 500-800 words.",
-      reward: "60",
-      difficulty: "Easy" as const,
-      timeLeft: "4h",
-      participants: 34,
-      category: "Education",
-    },
-  ];
 
-  const completedQuests = [
-    {
-      title: "Daily Market Summary",
-      description: "Completed daily summary of crypto market movements and major news events.",
-      reward: "30",
-      difficulty: "Easy" as const,
-      timeLeft: "Completed",
-      participants: 120,
-      category: "Content",
-      completed: true,
-    },
-    {
-      title: "Protocol TVL Tracking",
-      description: "Tracked Total Value Locked across top 20 DeFi protocols for 24 hours.",
-      reward: "80",
-      difficulty: "Medium" as const,
-      timeLeft: "Completed",
-      participants: 45,
-      category: "Analytics",
-      completed: true,
-    },
-  ];
+  useEffect(() => {
+    let filtered = [...quests];
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (quest) =>
+          quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          quest.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply category filter
+    if (categoryFilter !== "all") {
+      filtered = filtered.filter((quest) => quest.category === categoryFilter);
+    }
+
+    // Apply difficulty filter
+    if (difficultyFilter !== "all") {
+      filtered = filtered.filter((quest) => quest.difficulty === difficultyFilter);
+    }
+
+    setFilteredQuests(filtered);
+  }, [searchTerm, categoryFilter, difficultyFilter, quests]);
+
+  const categories = Array.from(new Set(quests.map((q) => q.category)));
+  const difficulties = ["Easy", "Medium", "Hard"];
+
+  if (isLoading) {
+    return (
+      <section className="py-20 relative">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-muted-foreground">Loading quests...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 relative" aria-labelledby="quests-heading">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" aria-hidden="true"></div>
 
       <div className="container relative z-10 mx-auto px-4">
@@ -125,68 +92,90 @@ const QuestFeed = () => {
               </span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Choose from thousands of quests. Deploy your AI agent or complete them manually to earn crypto rewards.
+              Choose from available quests. Deploy your AI agent or complete them manually to earn crypto rewards.
             </p>
           </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="glass w-full justify-start overflow-x-auto" role="tablist" aria-label="Quest categories">
-              <TabsTrigger value="all" aria-label="View all quests">All Quests</TabsTrigger>
-              <TabsTrigger value="content" aria-label="View content quests">Content</TabsTrigger>
-              <TabsTrigger value="analytics" aria-label="View analytics quests">Analytics</TabsTrigger>
-              <TabsTrigger value="development" aria-label="View development quests">Development</TabsTrigger>
-              <TabsTrigger value="completed" aria-label="View completed quests">Completed</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="space-y-4 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {quests.map((quest, index) => (
-                  <div key={index} className="stagger-item">
-                    <QuestCard {...quest} />
-                  </div>
-                ))}
+          {/* Filters */}
+          <div className="glass p-6 rounded-lg space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Filter className="w-5 h-5 text-muted-foreground" />
+              <h3 className="font-semibold">Filter & Search</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search quests..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            </TabsContent>
 
-            <TabsContent value="content" className="space-y-4 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {quests
-                  .filter((q) => q.category === "Content")
-                  .map((quest, index) => (
-                    <QuestCard key={index} {...quest} />
+              {/* Category Filter */}
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
                   ))}
-              </div>
-            </TabsContent>
+                </SelectContent>
+              </Select>
 
-            <TabsContent value="analytics" className="space-y-4 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {quests
-                  .filter((q) => q.category === "Analytics")
-                  .map((quest, index) => (
-                    <QuestCard key={index} {...quest} />
+              {/* Difficulty Filter */}
+              <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Difficulties" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Difficulties</SelectItem>
+                  {difficulties.map((difficulty) => (
+                    <SelectItem key={difficulty} value={difficulty}>
+                      {difficulty}
+                    </SelectItem>
                   ))}
-              </div>
-            </TabsContent>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <TabsContent value="development" className="space-y-4 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {quests
-                  .filter((q) => q.category === "Development")
-                  .map((quest, index) => (
-                    <QuestCard key={index} {...quest} />
-                  ))}
-              </div>
-            </TabsContent>
+            {/* Results Count */}
+            <p className="text-sm text-muted-foreground">
+              Showing {filteredQuests.length} of {quests.length} quests
+            </p>
+          </div>
 
-            <TabsContent value="completed" className="space-y-4 mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {completedQuests.map((quest, index) => (
-                  <QuestCard key={index} {...quest} />
-                ))}
+          {/* Quest Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredQuests.length === 0 ? (
+              <div className="col-span-2 text-center py-12">
+                <p className="text-muted-foreground">No quests found matching your criteria</p>
               </div>
-            </TabsContent>
-          </Tabs>
+            ) : (
+              filteredQuests.map((quest) => (
+                <div key={quest.id} className="stagger-item">
+                  <QuestCard
+                    questId={quest.id}
+                    title={quest.title}
+                    description={quest.description}
+                    reward={quest.reward.toString()}
+                    difficulty={quest.difficulty as "Easy" | "Medium" | "Hard"}
+                    timeLeft="Available"
+                    participants={Math.floor(Math.random() * 50) + 10}
+                    category={quest.category}
+                    onAccepted={fetchQuests}
+                  />
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </section>
