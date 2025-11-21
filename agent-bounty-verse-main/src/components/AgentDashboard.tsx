@@ -2,11 +2,22 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Bot, TrendingUp, Award, Zap } from "lucide-react";
+import { Bot, TrendingUp, Award, Zap, Plus, Eye, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { Database } from "@/integrations/supabase/types";
+
+type Quest = Database['public']['Tables']['quests']['Row'];
 
 const AgentDashboard = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [myQuests, setMyQuests] = useState<Quest[]>([]);
+  const [loadingQuests, setLoadingQuests] = useState(true);
   const agentStats = {
     level: 12,
     xp: 3450,
@@ -21,6 +32,60 @@ const AgentDashboard = () => {
     { quest: "Social Sentiment Tracking", reward: "$75", time: "5h ago", status: "completed" },
     { quest: "Protocol Documentation", reward: "$40", time: "1d ago", status: "completed" },
   ];
+
+  useEffect(() => {
+    const fetchMyQuests = async () => {
+      if (!user) {
+        setLoadingQuests(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('quests')
+          .select('*')
+          .eq('created_by', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setMyQuests(data || []);
+      } catch (error) {
+        console.error('Error fetching my quests:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load your quests",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingQuests(false);
+      }
+    };
+
+    fetchMyQuests();
+  }, [user, toast]);
+
+  const handleDeleteQuest = async (questId: string) => {
+    try {
+      const { error } = await supabase
+        .from('quests')
+        .delete()
+        .eq('id', questId);
+
+      if (error) throw error;
+
+      setMyQuests(prev => prev.filter(q => q.id !== questId));
+      toast({
+        title: "Quest Deleted",
+        description: "Your quest has been removed",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete quest",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <section className="py-20 relative" aria-labelledby="dashboard-heading">
@@ -106,8 +171,8 @@ const AgentDashboard = () => {
           <Card className="glass p-6 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold">Recent Activity</h3>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={() => toast({
                   title: "Activity History",
@@ -143,6 +208,92 @@ const AgentDashboard = () => {
               ))}
             </div>
           </Card>
+
+          {/* My Created Quests */}
+          {user && (
+            <Card className="glass p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold">My Created Quests</h3>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => navigate('/create-quest')}
+                  className="gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Quest
+                </Button>
+              </div>
+
+              {loadingQuests ? (
+                <p className="text-sm text-muted-foreground text-center py-8">Loading your quests...</p>
+              ) : myQuests.length === 0 ? (
+                <div className="text-center py-8 space-y-4">
+                  <p className="text-muted-foreground">You haven't created any quests yet</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/create-quest')}
+                    className="gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create Your First Quest
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {myQuests.map((quest) => (
+                    <div
+                      key={quest.id}
+                      className="flex items-center justify-between p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-medium">{quest.title}</p>
+                          <Badge
+                            variant="outline"
+                            className={
+                              quest.status === 'active'
+                                ? 'bg-success/20 text-success border-success/30'
+                                : 'bg-muted text-muted-foreground'
+                            }
+                          >
+                            {quest.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>{quest.category}</span>
+                          <span>•</span>
+                          <span>{quest.difficulty}</span>
+                          <span>•</span>
+                          <span className="text-accent font-semibold">{quest.reward} USDC</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/quest/${quest.id}`)}
+                          className="gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteQuest(quest.id)}
+                          className="gap-2 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </section>
