@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,15 +41,17 @@ const QuestDetails = () => {
   const [isCompleting, setIsCompleting] = useState(false);
   const [aiOutput, setAiOutput] = useState<string>("");
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    fetchQuestDetails();
-  }, [id, user]);
+  const generateAIOutput = (questData: Quest) => {
+    const outputs: Record<string, string> = {
+      Analytics: `# User Engagement Analysis Report\n\n## Executive Summary\nAnalyzed 10,000+ user interactions across Q4 2024.\n\n## Key Findings:\n- 📈 45% increase in daily active users\n- ⏱️ Average session time: 12.3 minutes (+22%)\n- 🎯 Conversion rate improved to 8.4%\n\n## Top Performing Features:\n1. Quest completion workflow (+67% engagement)\n2. Real-time notifications (+43% retention)\n3. Leaderboard system (+38% competition)\n\n## Recommendations:\n- Implement personalized quest suggestions\n- Add social sharing capabilities\n- Introduce streak bonuses for consistency`,
+      Content: `# AI Research Paper Summary\n\n## Papers Analyzed: 15\n\n### Top 3 Breakthroughs:\n\n**1. Multimodal AI Systems**\n- Integration of vision, language, and reasoning\n- 40% improvement in task accuracy\n- Applications in robotics and healthcare\n\n**2. Efficient Model Training**\n- New techniques reduce training time by 60%\n- Lower computational costs\n- More accessible for smaller teams\n\n**3. AI Safety & Alignment**\n- Novel approaches to value alignment\n- Improved interpretability methods\n- Enhanced reliability in critical systems\n\n### Emerging Trends:\n- Edge AI deployment\n- Federated learning adoption\n- Quantum-AI hybrid systems`,
+      Development: `# Code Review Report\n\n## E-commerce Checkout Flow Analysis\n\n### ✅ Strengths:\n- Clean component structure\n- Proper error handling\n- Type-safe implementation\n\n### ⚠️ Issues Found:\n\n**Critical (1):**\n- Payment validation lacks timeout handling\n- Risk: Transaction hanging indefinitely\n- Fix: Add 30s timeout with retry logic\n\n**Medium (3):**\n- Cart state not persisted on refresh\n- Missing loading states on payment\n- Address validation could be stricter\n\n**Low (5):**\n- Console.logs in production code\n- Unused imports in CheckoutForm.tsx\n- Consider memoizing expensive calculations\n\n### Performance:\n- Lighthouse Score: 94/100\n- Bundle size: 245KB (within target)\n\n### Recommendations:\n- Implement optimistic UI updates\n- Add payment method icons\n- Consider adding guest checkout`,
+    };
 
-  const fetchQuestDetails = async () => {
+    setAiOutput(outputs[questData.category] || outputs.Development);
+  };
+
+  const fetchQuestDetails = useCallback(async () => {
     try {
       const { data: questData, error: questError } = await supabase
         .from("quests")
@@ -70,7 +72,7 @@ const QuestDetails = () => {
 
       setQuest(questData);
       setProgress(progressData || null);
-      
+
       if (progressData?.status === "completed") {
         generateAIOutput(questData);
       }
@@ -84,17 +86,17 @@ const QuestDetails = () => {
     } finally {
       setIsLoading(false);
     }
-  };
 
-  const generateAIOutput = (questData: Quest) => {
-    const outputs: Record<string, string> = {
-      Analytics: `# User Engagement Analysis Report\n\n## Executive Summary\nAnalyzed 10,000+ user interactions across Q4 2024.\n\n## Key Findings:\n- 📈 45% increase in daily active users\n- ⏱️ Average session time: 12.3 minutes (+22%)\n- 🎯 Conversion rate improved to 8.4%\n\n## Top Performing Features:\n1. Quest completion workflow (+67% engagement)\n2. Real-time notifications (+43% retention)\n3. Leaderboard system (+38% competition)\n\n## Recommendations:\n- Implement personalized quest suggestions\n- Add social sharing capabilities\n- Introduce streak bonuses for consistency`,
-      Content: `# AI Research Paper Summary\n\n## Papers Analyzed: 15\n\n### Top 3 Breakthroughs:\n\n**1. Multimodal AI Systems**\n- Integration of vision, language, and reasoning\n- 40% improvement in task accuracy\n- Applications in robotics and healthcare\n\n**2. Efficient Model Training**\n- New techniques reduce training time by 60%\n- Lower computational costs\n- More accessible for smaller teams\n\n**3. AI Safety & Alignment**\n- Novel approaches to value alignment\n- Improved interpretability methods\n- Enhanced reliability in critical systems\n\n### Emerging Trends:\n- Edge AI deployment\n- Federated learning adoption\n- Quantum-AI hybrid systems`,
-      Development: `# Code Review Report\n\n## E-commerce Checkout Flow Analysis\n\n### ✅ Strengths:\n- Clean component structure\n- Proper error handling\n- Type-safe implementation\n\n### ⚠️ Issues Found:\n\n**Critical (1):**\n- Payment validation lacks timeout handling\n- Risk: Transaction hanging indefinitely\n- Fix: Add 30s timeout with retry logic\n\n**Medium (3):**\n- Cart state not persisted on refresh\n- Missing loading states on payment\n- Address validation could be stricter\n\n**Low (5):**\n- Console.logs in production code\n- Unused imports in CheckoutForm.tsx\n- Consider memoizing expensive calculations\n\n### Performance:\n- Lighthouse Score: 94/100\n- Bundle size: 245KB (within target)\n\n### Recommendations:\n- Implement optimistic UI updates\n- Add payment method icons\n- Consider adding guest checkout`,
-    };
 
-    setAiOutput(outputs[questData.category] || outputs.Development);
-  };
+  }, [id, user, toast]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    fetchQuestDetails();
+  }, [id, user, fetchQuestDetails, navigate]);
 
   const handleCompleteQuest = async () => {
     if (!quest || !progress || !user) return;
@@ -113,7 +115,7 @@ const QuestDetails = () => {
       if (error) throw error;
 
       generateAIOutput(quest);
-      
+
       toast({
         title: "Quest Completed! 🎉",
         description: (
@@ -193,8 +195,8 @@ const QuestDetails = () => {
                   <Badge variant="outline">{quest.category}</Badge>
                   <Badge variant="outline" className={
                     quest.difficulty === "Easy" ? "bg-success/20 text-success border-success/30" :
-                    quest.difficulty === "Medium" ? "bg-warning/20 text-warning border-warning/30" :
-                    "bg-destructive/20 text-destructive border-destructive/30"
+                      quest.difficulty === "Medium" ? "bg-warning/20 text-warning border-warning/30" :
+                        "bg-destructive/20 text-destructive border-destructive/30"
                   }>
                     {quest.difficulty}
                   </Badge>
@@ -248,8 +250,8 @@ const QuestDetails = () => {
 
             {/* Action Button */}
             {progress && !isCompleted && (
-              <Button 
-                onClick={handleCompleteQuest} 
+              <Button
+                onClick={handleCompleteQuest}
                 disabled={isCompleting}
                 className="w-full"
                 size="lg"

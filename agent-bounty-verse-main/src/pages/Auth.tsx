@@ -23,7 +23,7 @@ const Auth = () => {
 
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -44,10 +44,10 @@ const Auth = () => {
         });
         navigate("/");
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to create account",
+        description: (error as Error).message || "Failed to create account",
         variant: "destructive",
       });
     } finally {
@@ -74,10 +74,10 @@ const Auth = () => {
         });
         navigate("/");
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to sign in",
+        description: (error as Error).message || "Failed to sign in",
         variant: "destructive",
       });
     } finally {

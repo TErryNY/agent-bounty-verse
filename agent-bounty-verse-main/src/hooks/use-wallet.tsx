@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ethereum?: any;
   }
 }
@@ -36,16 +37,16 @@ export const useWallet = create<WalletState>()(
           }
 
           const provider = new ethers.BrowserProvider(window.ethereum);
-          
+
           const accounts = await provider.send("eth_requestAccounts", []);
           const address = accounts[0];
-          
+
           const network = await provider.getNetwork();
           if (network.chainId !== 8453n) {
             try {
               await provider.send("wallet_switchEthereumChain", [{ chainId: "0x2105" }]);
-            } catch (switchError: any) {
-              if (switchError.code === 4902) {
+            } catch (switchError: unknown) {
+              if ((switchError as { code: number }).code === 4902) {
                 await provider.send("wallet_addEthereumChain", [{
                   chainId: "0x2105",
                   chainName: "Base",
@@ -60,7 +61,7 @@ export const useWallet = create<WalletState>()(
           }
 
           set({ address, isConnected: true, isConnecting: false, provider });
-          
+
           await get().updateBalance();
 
           window.ethereum.on("accountsChanged", (accounts: string[]) => {
@@ -75,10 +76,10 @@ export const useWallet = create<WalletState>()(
           window.ethereum.on("chainChanged", () => {
             window.location.reload();
           });
-        } catch (error: any) {
+        } catch (error) {
           console.error("Failed to connect wallet:", error);
           set({ isConnecting: false });
-          throw new Error(error.message || "Failed to connect wallet");
+          throw new Error((error as Error).message || "Failed to connect wallet");
         }
       },
       disconnect: () => {
@@ -92,24 +93,24 @@ export const useWallet = create<WalletState>()(
 
         try {
           const signer = await provider.getSigner();
-          
+
           const usdcAddress = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
           const usdcAbi = [
             "function transfer(address to, uint256 amount) returns (bool)"
           ];
           const usdcContract = new ethers.Contract(usdcAddress, usdcAbi, signer);
-          
+
           const amountInWei = ethers.parseUnits(amount, 6);
-          
+
           const tx = await usdcContract.transfer(to, amountInWei);
           await tx.wait();
-          
+
           await get().updateBalance();
-          
+
           return tx.hash;
-        } catch (error: any) {
+        } catch (error) {
           console.error("Transaction failed:", error);
-          throw new Error(error.message || "Transaction failed");
+          throw new Error((error as Error).message || "Transaction failed");
         }
       },
       updateBalance: async () => {
@@ -122,10 +123,10 @@ export const useWallet = create<WalletState>()(
             "function balanceOf(address account) view returns (uint256)"
           ];
           const usdcContract = new ethers.Contract(usdcAddress, usdcAbi, provider);
-          
+
           const balance = await usdcContract.balanceOf(address);
           const formattedBalance = ethers.formatUnits(balance, 6);
-          
+
           set({ balance: parseFloat(formattedBalance).toFixed(2) });
         } catch (error) {
           console.error("Failed to fetch balance:", error);

@@ -37,7 +37,7 @@ const WalletTransfer = () => {
     setIsSending(true);
     try {
       const txHash = await sendTransaction(recipient, amount);
-      
+
       toast({
         title: "Transaction Sent! 🎉",
         description: (
@@ -50,11 +50,11 @@ const WalletTransfer = () => {
 
       setRecipient("");
       setAmount("");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Transfer error:", error);
       toast({
         title: "Transfer Failed",
-        description: error.message || "Failed to send transaction",
+        description: (error as Error).message || "Failed to send transaction",
         variant: "destructive",
       });
     } finally {
@@ -131,8 +131,8 @@ const WalletTransfer = () => {
           />
         </div>
 
-        <Button 
-          onClick={handleSend} 
+        <Button
+          onClick={handleSend}
           disabled={isSending || !recipient || !amount}
           className="w-full"
           size="lg"

@@ -37,7 +37,7 @@ export default function NotificationListener() {
                 <Bell className="h-4 w-4" />
                 {notification.title}
               </div>
-            ) as any,
+            ) as any, // eslint-disable-line @typescript-eslint/no-explicit-any
             description: notification.message,
           });
 

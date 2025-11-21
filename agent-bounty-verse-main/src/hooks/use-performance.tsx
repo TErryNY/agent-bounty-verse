@@ -47,7 +47,7 @@ export async function measureAsync<T>(
 export function reportWebVitals() {
   if ("web-vital" in window) {
     // Report Core Web Vitals
-    const reportMetric = (metric: any) => {
+    const reportMetric = (metric: { name: string; value: number }) => {
       console.log(metric.name, metric.value);
       // Send to analytics service in production
     };

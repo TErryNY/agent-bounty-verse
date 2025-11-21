@@ -17,25 +17,25 @@ const RewardClaim = () => {
   const [isClaiming, setIsClaiming] = useState(false);
 
   useEffect(() => {
+    const fetchEarnings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("total_points")
+          .eq("id", user!.id)
+          .single();
+
+        if (error) throw error;
+        setTotalEarnings(data?.total_points || 0);
+      } catch (error) {
+        console.error("Error fetching earnings:", error);
+      }
+    };
+
     if (user) {
       fetchEarnings();
     }
   }, [user]);
-
-  const fetchEarnings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("total_points")
-        .eq("id", user!.id)
-        .single();
-
-      if (error) throw error;
-      setTotalEarnings(data?.total_points || 0);
-    } catch (error) {
-      console.error("Error fetching earnings:", error);
-    }
-  };
 
   const handleClaim = async () => {
     if (!isConnected) {
@@ -83,11 +83,11 @@ const RewardClaim = () => {
       });
 
       setTotalEarnings(0);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Claim error:", error);
       toast({
         title: "Claim Failed",
-        description: error.message || "Failed to claim rewards",
+        description: (error as Error).message || "Failed to claim rewards",
         variant: "destructive",
       });
     } finally {

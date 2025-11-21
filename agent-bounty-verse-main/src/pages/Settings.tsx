@@ -60,7 +60,7 @@ export default function Settings() {
         .select("*")
         .eq("user_id", user!.id)
         .single();
-      if (error && (error as any).code !== "PGRST116") throw error;
+      if (error && (error as { code: string }).code !== "PGRST116") throw error;
       return data || null;
     },
   });
@@ -97,8 +97,8 @@ export default function Settings() {
       toast({ title: "Success", description: "Account settings updated successfully" });
       queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
     },
-    onError: (error: any) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    onError: (error) => {
+      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     },
   });
 
@@ -118,8 +118,8 @@ export default function Settings() {
       toast({ title: "Success", description: "Notification preferences updated successfully" });
       queryClient.invalidateQueries({ queryKey: ["notification_preferences", user?.id] });
     },
-    onError: (error: any) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    onError: (error) => {
+      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     },
   });
 
@@ -144,8 +144,8 @@ export default function Settings() {
       toast({ title: "Success", description: "Theme updated successfully" });
       queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
     },
-    onError: (error: any) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    onError: (error) => {
+      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     },
   });
 

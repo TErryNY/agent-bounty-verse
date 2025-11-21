@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,25 @@ export default function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  const fetchNotifications = useCallback(async () => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("notifications")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error("Error fetching notifications:", error);
+      return;
+    }
+
+    setNotifications(data || []);
+    setUnreadCount(data?.filter((n) => !n.read).length || 0);
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
 
@@ -55,26 +74,7 @@ export default function NotificationsDropdown() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
-
-  const fetchNotifications = async () => {
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (error) {
-      console.error("Error fetching notifications:", error);
-      return;
-    }
-
-    setNotifications(data || []);
-    setUnreadCount(data?.filter((n) => !n.read).length || 0);
-  };
+  }, [user, fetchNotifications]);
 
   const markAsRead = async (notificationId: string) => {
     const { error } = await supabase
@@ -161,9 +161,8 @@ export default function NotificationsDropdown() {
             notifications.map((notification) => (
               <DropdownMenuItem
                 key={notification.id}
-                className={`flex flex-col items-start p-4 cursor-pointer ${
-                  !notification.read ? "bg-accent/50" : ""
-                }`}
+                className={`flex flex-col items-start p-4 cursor-pointer ${!notification.read ? "bg-accent/50" : ""
+                  }`}
                 onClick={() => !notification.read && markAsRead(notification.id)}
               >
                 <div className="flex items-start justify-between w-full gap-2">

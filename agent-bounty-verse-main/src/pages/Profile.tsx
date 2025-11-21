@@ -38,35 +38,35 @@ export default function Profile() {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user?.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setProfile({
+            username: data.username || "",
+            bio: data.bio || "",
+            avatar_url: data.avatar_url || "",
+            wallet_address: data.wallet_address || "",
+            total_points: data.total_points || 0,
+            quests_completed: data.quests_completed || 0,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      }
+    };
+
     if (user) {
       loadProfile();
     }
   }, [user]);
-
-  const loadProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        setProfile({
-          username: data.username || "",
-          bio: data.bio || "",
-          avatar_url: data.avatar_url || "",
-          wallet_address: data.wallet_address || "",
-          total_points: data.total_points || 0,
-          quests_completed: data.quests_completed || 0,
-        });
-      }
-    } catch (error) {
-      console.error("Error loading profile:", error);
-    }
-  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0] || !user) return;
@@ -112,10 +112,10 @@ export default function Profile() {
         title: "Success",
         description: "Avatar uploaded successfully",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
         variant: "destructive",
       });
     } finally {
@@ -143,10 +143,10 @@ export default function Profile() {
         title: "Success",
         description: "Profile updated successfully",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
         variant: "destructive",
       });
     } finally {
