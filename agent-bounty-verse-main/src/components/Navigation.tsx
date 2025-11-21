@@ -12,7 +12,7 @@ import UserMenu from "@/components/UserMenu";
 
 const Navigation = () => {
   const { toast } = useToast();
-  const { address, isConnected, isConnecting, connect, disconnect } = useWallet();
+  const { address, balance, isConnected, isConnecting, connect, disconnect } = useWallet();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -137,7 +137,13 @@ const Navigation = () => {
               >
                 <Wallet className="w-4 h-4" aria-hidden="true" />
                 <span className="hidden sm:inline">
-                  {isConnecting ? "Connecting..." : isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : "Connect Wallet"}
+                  {isConnecting ? "Connecting..." : isConnected ? (
+                    <span className="flex items-center gap-2">
+                      <span className="font-mono">{balance} USDC</span>
+                      <span className="opacity-50">|</span>
+                      <span>{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                    </span>
+                  ) : "Connect Wallet"}
                 </span>
               </Button>
             </div>

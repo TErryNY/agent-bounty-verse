@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, Home, Target, Settings, Trophy, BookOpen, LogOut } from "lucide-react";
+import { Menu, Home, Target, Settings, Trophy, BookOpen, LogOut, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -41,9 +41,9 @@ const MobileMenu = ({ isOpen, setIsOpen }: MobileMenuProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="md:hidden"
           aria-label="Open mobile menu"
         >
@@ -103,10 +103,32 @@ const MobileMenu = ({ isOpen, setIsOpen }: MobileMenuProps) => {
             <BookOpen className="w-5 h-5" />
             Docs
           </Button>
-          
+
           {user && (
             <>
               <div className="border-t border-border my-2" />
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
+                onClick={() => {
+                  navigate('/profile');
+                  setIsOpen(false);
+                }}
+              >
+                <User className="w-5 h-5" />
+                Profile
+              </Button>
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
+                onClick={() => {
+                  navigate('/settings');
+                  setIsOpen(false);
+                }}
+              >
+                <Settings className="w-5 h-5" />
+                Settings
+              </Button>
               <Button
                 variant="ghost"
                 className="justify-start gap-3 text-destructive hover:text-destructive"

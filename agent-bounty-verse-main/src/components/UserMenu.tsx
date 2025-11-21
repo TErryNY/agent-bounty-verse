@@ -50,10 +50,11 @@ const UserMenu = () => {
                     <Home className="mr-2 h-4 w-4" />
                     Home
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast({
-                    title: "Coming Soon",
-                    description: "Profile settings will be available soon!",
-                })}>
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                 </DropdownMenuItem>
