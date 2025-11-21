@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Database } from "@/integrations/supabase/types";
+import DemoAgents from "@/components/DemoAgents";
 
 type Quest = Database['public']['Tables']['quests']['Row'];
 
@@ -166,6 +167,9 @@ const AgentDashboard = () => {
               </div>
             </Card>
           </div>
+
+          {/* Demo AI Agents */}
+          <DemoAgents />
 
           {/* Recent Activity */}
           <Card className="glass p-6 space-y-6">
