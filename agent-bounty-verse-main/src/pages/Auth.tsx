@@ -16,10 +16,31 @@ const Auth = () => {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [errors, setErrors] = useState<{ email?: string; password?: string; username?: string }>({});
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrors({});
+
+    // Validate username
+    if (username.length < 3) {
+      setErrors({ username: "Username must be at least 3 characters" });
+      setIsLoading(false);
+      return;
+    }
+
+    if (username.length > 20) {
+      setErrors({ username: "Username must be less than 20 characters" });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setErrors({ username: "Username can only contain letters, numbers, and underscores" });
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const redirectUrl = `${window.location.origin}/`;
@@ -45,9 +66,22 @@ const Auth = () => {
         navigate("/");
       }
     } catch (error) {
+      const errorMessage = (error as Error).message || "Failed to create account";
+
+      // Provide specific error messages
+      let description = errorMessage;
+      if (errorMessage.includes("User already registered")) {
+        description = "This email is already registered. Please sign in instead.";
+      } else if (errorMessage.includes("duplicate") || errorMessage.includes("unique")) {
+        description = "This username is already taken. Please choose another one.";
+        setErrors({ username: "Username already taken" });
+      } else if (errorMessage.includes("profiles")) {
+        description = "Database setup incomplete. Please ensure migrations are applied in Supabase.";
+      }
+
       toast({
-        title: "Error",
-        description: (error as Error).message || "Failed to create account",
+        title: "Sign-up failed",
+        description,
         variant: "destructive",
       });
     } finally {
@@ -162,7 +196,12 @@ const Auth = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     required
                     disabled={isLoading}
+                    minLength={3}
+                    maxLength={20}
                   />
+                  {errors.username && (
+                    <p className="text-sm text-destructive mt-1">{errors.username}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
