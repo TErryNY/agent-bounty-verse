@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 /**
  * Hook to monitor and report performance metrics
@@ -11,7 +12,7 @@ export function usePerformance(componentName: string) {
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         // Log performance metrics in production
-        console.log(`${componentName} - ${entry.name}:`, entry.duration);
+        logger.info(`${componentName} - ${entry.name}:`, entry.duration);
       }
     });
 
@@ -32,11 +33,11 @@ export async function measureAsync<T>(
   try {
     const result = await fn();
     const duration = performance.now() - start;
-    console.log(`${name} completed in ${duration.toFixed(2)}ms`);
+    logger.info(`${name} completed in ${duration.toFixed(2)}ms`);
     return result;
   } catch (error) {
     const duration = performance.now() - start;
-    console.error(`${name} failed after ${duration.toFixed(2)}ms`, error);
+    logger.error(`${name} failed after ${duration.toFixed(2)}ms`, error);
     throw error;
   }
 }
@@ -48,7 +49,7 @@ export function reportWebVitals() {
   if ("web-vital" in window) {
     // Report Core Web Vitals
     const reportMetric = (metric: { name: string; value: number }) => {
-      console.log(metric.name, metric.value);
+      logger.info(metric.name, metric.value);
       // Send to analytics service in production
     };
 

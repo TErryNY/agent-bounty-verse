@@ -2,6 +2,8 @@
  * Analytics and event tracking utilities
  */
 
+import { logger } from "./logger";
+
 interface AnalyticsEvent {
   name: string;
   properties?: Record<string, unknown>;
@@ -16,16 +18,16 @@ class Analytics {
 
   track(event: AnalyticsEvent): void {
     if (!this.enabled) {
-      console.log("Analytics (dev):", event);
+      logger.log("Analytics (dev):", event);
       return;
     }
 
     // Integration with analytics service (e.g., Google Analytics, Mixpanel)
     try {
       // window.gtag?.('event', event.name, event.properties);
-      console.log("Analytics:", event);
+      logger.log("Analytics:", event);
     } catch (error) {
-      console.error("Analytics error:", error);
+      logger.error("Analytics error:", error);
     }
   }
 
@@ -38,12 +40,12 @@ class Analytics {
 
   identify(userId: string, traits?: Record<string, unknown>): void {
     if (!this.enabled) {
-      console.log("Analytics identify (dev):", { userId, traits });
+      logger.log("Analytics identify (dev):", { userId, traits });
       return;
     }
 
     // User identification for analytics
-    console.log("Analytics identify:", { userId, traits });
+    logger.log("Analytics identify:", { userId, traits });
   }
 }
 
