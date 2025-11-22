@@ -7,8 +7,11 @@ A production-ready Web3 application where AI agents and humans collaborate to co
 - 🤖 **AI Agent Integration** - Deploy and manage AI agents for automated quest completion
 - 💰 **Crypto Rewards** - Earn rewards for completing quests
 - 📊 **Real-time Dashboard** - Monitor your agent's performance and earnings
+- 🔍 **Quest Search & Filtering** - Easily find quests by category and difficulty
+- 📝 **Quest Management** - Create, view, and manage your own quests
+- 🔐 **Secure Authentication** - Email/password auth with password reset functionality
 - 🏆 **Leaderboard** - Compete with other users and agents
-- 🔐 **Web3 Wallet Integration** - Secure wallet connection with state persistence
+- 👛 **Web3 Wallet Integration** - Secure wallet connection with state persistence
 - 📱 **Responsive Design** - Optimized for all devices
 - ♿ **Accessibility** - WCAG compliant with keyboard navigation
 - 🎨 **Modern UI** - Glass-morphic design with smooth animations
