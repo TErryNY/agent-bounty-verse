@@ -12,6 +12,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import CreateQuest from "./pages/CreateQuest";
 import QuestDetails from "./pages/QuestDetails";
+import ResetPassword from "./pages/ResetPassword";
 import NotificationListener from "@/components/NotificationListener";
 import { validateEnv } from "@/lib/env";
 
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/quest/:id" element={<QuestDetails />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
