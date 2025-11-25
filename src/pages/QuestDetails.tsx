@@ -12,6 +12,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { ArrowLeft, Bot, CheckCircle2, Clock, Coins, FileText, Sparkles } from "lucide-react";
+import QuestWalkthrough from "@/components/QuestWalkthrough";
 
 interface Quest {
   id: string;
@@ -33,7 +34,7 @@ interface UserProgress {
 const QuestDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [quest, setQuest] = useState<Quest | null>(null);
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -91,12 +92,14 @@ const QuestDetails = () => {
   }, [id, user, toast]);
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       navigate("/auth");
       return;
     }
-    fetchQuestDetails();
-  }, [id, user, fetchQuestDetails, navigate]);
+    if (user) {
+      fetchQuestDetails();
+    }
+  }, [id, user, authLoading, fetchQuestDetails, navigate]);
 
   const handleCompleteQuest = async () => {
     if (!quest || !progress || !user) return;
@@ -229,6 +232,46 @@ const QuestDetails = () => {
                 <p className="text-sm text-muted-foreground">Assigned AI Agent • {agent.specialty} Specialist</p>
               </div>
             </div>
+
+            {/* Requirements */}
+            {quest.requirements && quest.requirements.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Requirements
+                </h3>
+                <ul className="space-y-2">
+                  {quest.requirements.map((req, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-success" />
+                      {req}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+          </Card>
+
+          {/* Quest Walkthrough */}
+          {progress && !isCompleted && user && (
+            <QuestWalkthrough
+              quest={quest}
+              userProgressId={progress.id}
+              userId={user.id}
+              onAllStepsComplete={() => {
+                toast({
+                  title: "All Steps Complete! 🎉",
+                  description: "You've completed all walkthrough steps. Mark the quest as complete when ready.",
+                });
+              }}
+            />
+          )}
+
+          {/* Quest Details Card */}
+          <Card className="glass p-8 space-y-6">
+            <h2 className="text-2xl font-bold">Quest Details</h2>
+            <Separator />
 
             {/* Requirements */}
             {quest.requirements && quest.requirements.length > 0 && (
