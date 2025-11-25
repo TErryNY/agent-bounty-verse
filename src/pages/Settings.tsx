@@ -18,7 +18,6 @@ export default function Settings() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [theme, setTheme] = useState("dark");
