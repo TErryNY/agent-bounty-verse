@@ -93,7 +93,7 @@ const RewardClaim = memo(() => {
     } finally {
       setIsClaiming(false);
     }
-  }, [isConnected, totalEarnings, toast, user?.id, address, claimMutation]);
+  }, [isConnected, totalEarnings, toast, address, claimMutation]);
 
   if (!user) {
     return null;

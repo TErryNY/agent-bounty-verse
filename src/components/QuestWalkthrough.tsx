@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -47,16 +47,7 @@ const QuestWalkthrough = ({ quest, userProgressId, userId, onAllStepsComplete }:
     const [expandedSteps, setExpandedSteps] = useState<number[]>([0]); // First step expanded by default
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        // Generate steps based on quest
-        const questSteps = generateQuestSteps(quest);
-        setSteps(questSteps);
-
-        // Load saved progress
-        loadProgress();
-    }, [quest.id]);
-
-    const loadProgress = async () => {
+    const loadProgress = useCallback(async () => {
         try {
             const { data, error } = await supabase
                 .from("user_progress")
@@ -66,11 +57,42 @@ const QuestWalkthrough = ({ quest, userProgressId, userId, onAllStepsComplete }:
 
             if (error) throw error;
 
-            if (data?.steps_completed) {
-                setCompletedSteps(data.steps_completed as number[]);
+            if (data && (data as unknown as { steps_completed: number[] }).steps_completed) {
+                setCompletedSteps((data as unknown as { steps_completed: number[] }).steps_completed);
             }
         } catch (error) {
             console.error("Error loading progress:", error);
+        }
+    }, [userProgressId]);
+
+    useEffect(() => {
+        // Generate steps based on quest
+        const questSteps = generateQuestSteps(quest);
+        setSteps(questSteps);
+
+        // Load saved progress
+        loadProgress();
+    }, [quest, loadProgress]);
+
+    const saveProgress = async (completed: number[]) => {
+        setIsSaving(true);
+        try {
+            const { error } = await supabase
+                .from("user_progress")
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .update({ steps_completed: completed } as any)
+                .eq("id", userProgressId);
+
+            if (error) throw error;
+        } catch (error) {
+            console.error("Error saving progress:", error);
+            toast({
+                title: "Error",
+                description: "Failed to save progress. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -85,27 +107,6 @@ const QuestWalkthrough = ({ quest, userProgressId, userId, onAllStepsComplete }:
         // Check if all steps are complete
         if (newCompletedSteps.length === steps.length && onAllStepsComplete) {
             onAllStepsComplete();
-        }
-    };
-
-    const saveProgress = async (completed: number[]) => {
-        setIsSaving(true);
-        try {
-            const { error } = await supabase
-                .from("user_progress")
-                .update({ steps_completed: completed })
-                .eq("id", userProgressId);
-
-            if (error) throw error;
-        } catch (error) {
-            console.error("Error saving progress:", error);
-            toast({
-                title: "Error",
-                description: "Failed to save progress. Please try again.",
-                variant: "destructive",
-            });
-        } finally {
-            setIsSaving(false);
         }
     };
 
