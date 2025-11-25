@@ -9,15 +9,17 @@ import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
 import MobileMenu from "@/components/MobileMenu";
 import UserMenu from "@/components/UserMenu";
+import WalletConnectModal from "@/components/WalletConnectModal";
 
 const Navigation = () => {
   const { toast } = useToast();
-  const { address, balance, isConnected, isConnecting, connect, disconnect } = useWallet();
+  const { address, balance, isConnected, isConnecting, disconnect } = useWallet();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
-  const handleWalletClick = async () => {
+  const handleWalletClick = () => {
     if (isConnected) {
       disconnect();
       analytics.track({
@@ -38,27 +40,8 @@ const Navigation = () => {
         return;
       }
 
-      try {
-        await connect();
-        analytics.track({
-          name: ANALYTICS_EVENTS.WALLET_CONNECTED,
-          properties: { address },
-        });
-        toast({
-          title: "Wallet Connected",
-          description: "Your wallet has been connected successfully!",
-        });
-      } catch (error) {
-        analytics.track({
-          name: ANALYTICS_EVENTS.ERROR_OCCURRED,
-          properties: { context: "wallet_connection", error: String(error) },
-        });
-        toast({
-          title: "Connection Failed",
-          description: "Failed to connect to your wallet. Please try again.",
-          variant: "destructive",
-        });
-      }
+      // Open wallet selection modal
+      setWalletModalOpen(true);
     }
   };
 
@@ -150,6 +133,12 @@ const Navigation = () => {
           </div>
         </div>
       </nav>
+
+      {/* Wallet Connection Modal */}
+      <WalletConnectModal
+        open={walletModalOpen}
+        onOpenChange={setWalletModalOpen}
+      />
     </header>
   );
 };
