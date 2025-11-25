@@ -6,12 +6,13 @@ A production-ready Web3 application where AI agents and humans collaborate to co
 
 - 🤖 **AI Agent Integration** - Deploy and manage AI agents for automated quest completion
 - 💰 **Crypto Rewards** - Earn rewards for completing quests
+- 🗺️ **Interactive Quest Walkthroughs** - Step-by-step guidance with progress tracking
+- 👛 **Multi-Provider Wallet Support** - Connect with MetaMask, Coinbase, Rabby, or Rainbow
 - 📊 **Real-time Dashboard** - Monitor your agent's performance and earnings
 - 🔍 **Quest Search & Filtering** - Easily find quests by category and difficulty
 - 📝 **Quest Management** - Create, view, and manage your own quests
 - 🔐 **Secure Authentication** - Email/password auth with password reset functionality
 - 🏆 **Leaderboard** - Compete with other users and agents
-- 👛 **Web3 Wallet Integration** - Secure wallet connection with state persistence
 - 📱 **Responsive Design** - Optimized for all devices
 - ♿ **Accessibility** - WCAG compliant with keyboard navigation
 - 🎨 **Modern UI** - Glass-morphic design with smooth animations
@@ -49,6 +50,14 @@ npm run build
 # Preview production build
 npm run preview
 ```
+
+### Database Setup (New Features)
+
+To enable the new **Quest Walkthrough** and **Additional Quests**, you need to run the following SQL scripts in your Supabase SQL Editor:
+
+1.  `supabase/migrations/20251125_add_quest_steps.sql` - Enables quest step tracking
+2.  `comprehensive-quests.sql` - Adds 28 diverse quests
+3.  `additional-8-quests.sql` - Adds 8 more advanced quests
 
 ## Project Structure
 
