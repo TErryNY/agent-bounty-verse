@@ -18,47 +18,13 @@ export default defineConfig(({ mode }) => ({
     // Rollup options for optimization
     rollupOptions: {
       output: {
-        // Manual chunk splitting for better caching
-        manualChunks: (id) => {
-          // React core
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor';
-          }
-          // Radix UI components
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'radix-vendor';
-          }
-          // Supabase
-          if (id.includes('node_modules/@supabase')) {
-            return 'supabase-vendor';
-          }
-          // React Query
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'query-vendor';
-          }
-          // Lucide icons
-          if (id.includes('node_modules/lucide-react')) {
-            return 'icons-vendor';
-          }
-          // Other large dependencies
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        },
-        // Optimize chunk file names
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
     // Minification options
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-      },
-    },
+    minify: 'esbuild',
     // Source maps for production debugging (optional)
     sourcemap: mode !== 'production',
   },
