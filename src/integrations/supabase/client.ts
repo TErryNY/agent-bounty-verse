@@ -5,13 +5,42 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
+function createMockSupabase() {
+  const thenable = {
+    then: (resolve: (value: { data: unknown; error: null }) => void) => resolve({ data: null, error: null }),
+    catch: () => undefined,
+  };
+  const builder: any = {
+    select: () => builder,
+    eq: () => builder,
+    order: () => builder,
+    limit: () => thenable,
+    single: () => thenable,
+    insert: () => thenable,
+    update: () => thenable,
+    upsert: () => thenable,
+    then: thenable.then,
+    catch: thenable.catch,
+  };
+  return {
+    from: (_table: string) => builder,
+    channel: (_name: string) => {
+      const ch = {
+        on: () => ch,
+        subscribe: () => ({ id: _name }),
+      };
+      return ch;
+    },
+    removeChannel: (_ch: unknown) => undefined,
+  } as unknown as ReturnType<typeof createClient<Database>>;
+}
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-  }
-});
+export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+  ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        storage: localStorage,
+        persistSession: true,
+        autoRefreshToken: true,
+      }
+    })
+  : createMockSupabase();
