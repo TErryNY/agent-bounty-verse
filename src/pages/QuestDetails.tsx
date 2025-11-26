@@ -61,7 +61,9 @@ const QuestDetails = () => {
         .eq("id", id)
         .single();
 
-      if (questError) throw questError;
+      if (questError) {
+        console.warn("Falling back to local quest data due to error:", questError);
+      }
 
       const { data: progressData, error: progressError } = await supabase
         .from("user_progress")
@@ -72,11 +74,24 @@ const QuestDetails = () => {
 
       if (progressError && progressError.code !== "PGRST116") throw progressError;
 
-      setQuest(questData);
+      let finalQuest = questData as Quest | null;
+      if (!finalQuest) {
+        const fallbackQuests: Quest[] = [
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd001', title: 'Index DeFi Protocols on Base', description: 'Research and document top DeFi protocols on Base chain with metrics.', category: 'Analytics', difficulty: 'Medium', reward: 60, requirements: ['Protocol list', 'TVL metrics', 'Risk notes'] },
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd002', title: 'Write Wallet Connect Tutorial', description: 'Create a beginner-friendly tutorial to connect web wallets.', category: 'Content', difficulty: 'Easy', reward: 25, requirements: ['Screenshots', 'Code snippets', 'Step-by-step guide'] },
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd003', title: 'Build NFT Mint dApp', description: 'Implement a simple NFT minting dApp with UI and contract.', category: 'Development', difficulty: 'Hard', reward: 120, requirements: ['Mint function', 'Wallet connect', 'Confirmations'] },
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd004', title: 'Analyze Gas Fee Trends', description: 'Collect and analyze L2 gas fees over the last 30 days.', category: 'Analytics', difficulty: 'Easy', reward: 30, requirements: ['Data sources', 'Charts', 'Summary'] },
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd005', title: 'Create L2 Comparison Chart', description: 'Compare throughput, fees, and activity across top L2s.', category: 'Content', difficulty: 'Medium', reward: 40, requirements: ['Data table', 'Charts', 'Narrative summary'] },
+          { id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd006', title: 'Integrate Supabase Auth', description: 'Add Supabase email auth to an existing React app.', category: 'Development', difficulty: 'Medium', reward: 80, requirements: ['Sign in', 'Profile fetch', 'Protected routes'] },
+        ];
+        finalQuest = fallbackQuests.find(q => q.id === id!) || null;
+      }
+
+      setQuest(finalQuest);
       setProgress(progressData || null);
 
-      if (progressData?.status === "completed") {
-        generateAIOutput(questData);
+      if (finalQuest && progressData?.status === "completed") {
+        generateAIOutput(finalQuest);
       }
     } catch (error) {
       console.error("Error fetching quest:", error);

@@ -25,7 +25,91 @@ const QuestFeed = memo(() => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setQuests(data || []);
+      if (data && data.length > 0) {
+        setQuests(data);
+      } else {
+        const fallbackQuests: Quest[] = [
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd001',
+            title: 'Index DeFi Protocols on Base',
+            description: 'Research and document top DeFi protocols on Base chain with metrics.',
+            category: 'Analytics',
+            difficulty: 'Medium',
+            reward: 60,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Protocol list', 'TVL metrics', 'Risk notes'],
+          },
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd002',
+            title: 'Write Wallet Connect Tutorial',
+            description: 'Create a beginner-friendly tutorial to connect web wallets.',
+            category: 'Content',
+            difficulty: 'Easy',
+            reward: 25,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Screenshots', 'Code snippets', 'Step-by-step guide'],
+          },
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd003',
+            title: 'Build NFT Mint dApp',
+            description: 'Implement a simple NFT minting dApp with UI and contract.',
+            category: 'Development',
+            difficulty: 'Hard',
+            reward: 120,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Mint function', 'Wallet connect', 'Confirmations'],
+          },
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd004',
+            title: 'Analyze Gas Fee Trends',
+            description: 'Collect and analyze L2 gas fees over the last 30 days.',
+            category: 'Analytics',
+            difficulty: 'Easy',
+            reward: 30,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Data sources', 'Charts', 'Summary'],
+          },
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd005',
+            title: 'Create L2 Comparison Chart',
+            description: 'Compare throughput, fees, and activity across top L2s.',
+            category: 'Content',
+            difficulty: 'Medium',
+            reward: 40,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Data table', 'Charts', 'Narrative summary'],
+          },
+          {
+            id: '6b61e1f9-3c6c-4f1c-9a13-01a1ce1dd006',
+            title: 'Integrate Supabase Auth',
+            description: 'Add Supabase email auth to an existing React app.',
+            category: 'Development',
+            difficulty: 'Medium',
+            reward: 80,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: null,
+            requirements: ['Sign in', 'Profile fetch', 'Protected routes'],
+          },
+        ];
+        setQuests(fallbackQuests);
+      }
     } catch (error) {
       console.error('Error fetching quests:', error);
     } finally {
