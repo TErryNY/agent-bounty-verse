@@ -48,6 +48,19 @@ export default function NotificationsDropdown() {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  const formatRelativeTime = (dateString: string) => {
+    const now = Date.now();
+    const ts = new Date(dateString).getTime();
+    const diff = Math.max(0, now - ts);
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
   const fetchNotifications = useCallback(async () => {
     await refetch();
   }, [refetch]);
@@ -187,7 +200,7 @@ export default function NotificationsDropdown() {
                       {notification.message}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(notification.created_at).toLocaleDateString()}
+                      {formatRelativeTime(notification.created_at)}
                     </p>
                   </div>
                   {!notification.read && (

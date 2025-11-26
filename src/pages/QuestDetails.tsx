@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { ArrowLeft, Bot, CheckCircle2, Clock, Coins, FileText, Sparkles } from "lucide-react";
 import QuestWalkthrough from "@/components/QuestWalkthrough";
+import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 interface Quest {
   id: string;
@@ -100,6 +101,13 @@ const QuestDetails = () => {
       fetchQuestDetails();
     }
   }, [id, user, authLoading, fetchQuestDetails, navigate]);
+
+  useEffect(() => {
+    if (quest) {
+      analytics.page(`/quest/${id}`, quest.title);
+      analytics.track({ name: ANALYTICS_EVENTS.QUEST_VIEWED, properties: { questId: quest.id, title: quest.title, category: quest.category, difficulty: quest.difficulty } });
+    }
+  }, [quest, id]);
 
   const handleCompleteQuest = async () => {
     if (!quest || !progress || !user) return;

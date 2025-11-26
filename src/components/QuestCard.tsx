@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router-dom";
+import { rateLimiter, RATE_LIMITS } from "@/lib/rate-limit";
+import { analytics, ANALYTICS_EVENTS } from "@/lib/analytics";
 
 interface QuestCardProps {
   title: string;
@@ -59,6 +61,7 @@ const QuestCard = ({
 
   const handleButtonClick = async () => {
     if (completed && questId) {
+      analytics.track({ name: ANALYTICS_EVENTS.QUEST_VIEWED, properties: { questId, title } });
       navigate(`/quest/${questId}`);
       return;
     }
@@ -82,6 +85,16 @@ const QuestCard = ({
       return;
     }
     
+    const allowed = rateLimiter.check(`accept:${user.id}`, RATE_LIMITS.API_CALL);
+    if (!allowed) {
+      toast({
+        title: "Slow down",
+        description: "Please wait a moment before accepting more quests",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAccepting(true);
     
     try {
@@ -115,6 +128,10 @@ const QuestCard = ({
             <p className="text-xs text-muted-foreground">Reward: {reward} USDC</p>
           </div>
         ),
+      });
+      analytics.track({
+        name: ANALYTICS_EVENTS.QUEST_STARTED,
+        properties: { questId, title, reward, difficulty, category },
       });
       
       onAccepted?.();
