@@ -42,23 +42,4 @@ export async function measureAsync<T>(
   }
 }
 
-/**
- * Report Web Vitals metrics
- */
-export function reportWebVitals() {
-  if ("web-vital" in window) {
-    // Report Core Web Vitals
-    const reportMetric = (metric: { name: string; value: number }) => {
-      logger.info(metric.name, metric.value);
-      // Send to analytics service in production
-    };
 
-    // This would typically use the web-vitals library
-    // import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
-    // getCLS(reportMetric);
-    // getFID(reportMetric);
-    // getFCP(reportMetric);
-    // getLCP(reportMetric);
-    // getTTFB(reportMetric);
-  }
-}

@@ -51,14 +51,16 @@ const QuestWalkthrough = ({ quest, userProgressId, userId, onAllStepsComplete }:
         try {
             const { data, error } = await supabase
                 .from("user_progress")
-                .select("steps_completed")
+                .select("*")
                 .eq("id", userProgressId)
                 .single();
 
             if (error) throw error;
 
-            if (data && (data as unknown as { steps_completed: number[] }).steps_completed) {
-                setCompletedSteps((data as unknown as { steps_completed: number[] }).steps_completed);
+            // Gracefully handle deployments where steps_completed column isn't present
+            const steps = (data as Record<string, unknown> | null)?.["steps_completed"] as number[] | undefined;
+            if (Array.isArray(steps)) {
+                setCompletedSteps(steps);
             }
         } catch (error) {
             console.error("Error loading progress:", error);
@@ -79,11 +81,22 @@ const QuestWalkthrough = ({ quest, userProgressId, userId, onAllStepsComplete }:
         try {
             const { error } = await supabase
                 .from("user_progress")
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .update({ steps_completed: completed } as any)
+                .update({ steps_completed: completed } as unknown as { steps_completed: number[] })
                 .eq("id", userProgressId);
 
-            if (error) throw error;
+            if (error) {
+                // 42703: undefined_column
+                const code = (error as { code?: string } | null)?.code;
+                if (code === "42703") {
+                    toast({
+                        title: "Progress tracking unavailable",
+                        description: "Database migration for quest steps is not applied. Steps will not persist until migration runs.",
+                        variant: "destructive",
+                    });
+                    return;
+                }
+                throw error;
+            }
         } catch (error) {
             console.error("Error saving progress:", error);
             toast({

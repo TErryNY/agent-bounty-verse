@@ -36,16 +36,22 @@ function createMockSupabase(): SupabaseClient<Database> {
       subscribe: () => ({ id: _name }),
     }),
     removeChannel: (_ch: unknown) => undefined,
+    auth: {
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      signOut: () => Promise.resolve({ error: null }),
+      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+    },
   } as unknown as SupabaseClient<Database>;
   return client;
 }
 
 export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
   ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: {
-        storage: localStorage,
-        persistSession: true,
-        autoRefreshToken: true,
-      }
-    })
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    }
+  })
   : createMockSupabase();
